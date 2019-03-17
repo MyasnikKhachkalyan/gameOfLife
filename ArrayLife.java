@@ -4,14 +4,36 @@ public class ArrayLife{
     private int height;
     private boolean[][] world; 
     private boolean[][] worldCopy;
+    private Pattern pattern;
     private Scanner myObj = new Scanner(System.in);
 
-    private void copyWorld(){
+    public ArrayLife(String format){
+        pattern = new Pattern(format);
+        width = pattern.getWidth();
+        height = pattern.getHeight();
+        world = new boolean[height][width];
+        worldCopy = new boolean[height][width];
+        pattern.initialise(world);
+
+
+    }
+
+    public static void main(String[] args){
+        ArrayLife al = new ArrayLife(args[0]);
+        al.play();
+    }
+
+    private void setCopiedWorld(){
         for(int i=0; i<height; i++){
             for(int j=0; j<width; j++){
-                worldCopy[i][j] = world[i][j];
+                 world[i][j] = worldCopy[i][j] ;
             }
-        }        
+        }
+        for(int i=0; i<height; i++){
+            for(int j=0; j<width; j++){
+                worldCopy[i][j] = false;
+            }
+        }   
     }
 
     public boolean getCell(int col, int row){
@@ -33,6 +55,15 @@ public class ArrayLife{
         }
         world[row][col] = value;
     }
+    private void setCellCopy(int col, int row, boolean value){
+        if(col<0 || col>=width){
+            return;
+        }
+        if(row<0 || row>=height){
+            return;
+        }
+        worldCopy[row][col] = value;
+    }
     public void print(){
         for(int i=0; i<height; i++){
             for(int j=0; j<width; j++){
@@ -50,7 +81,7 @@ public class ArrayLife{
         int counter = 0;
         for(int i=row-1;i<row-1+3;i++){
             for(int j=col-1;j<col-1+3;j++){
-                if(i==row && j=col){
+                if(i==row && j==col){
                     continue;
                 }
                 if(getCell(i,j)){
@@ -60,33 +91,33 @@ public class ArrayLife{
         }
         return counter;
     }
-    public boolean computeCell(int col, int row){
+    private boolean computeCell(int col, int row){
         if(countNeighbours(col, row)<2 || countNeighbours(col, row)>3){
             return false;
         }
         return true;
     }
     public void nextGeneration(){
-        copyWorld();
         for(int i=0; i<height; i++){
             for(int j=0; j<width; j++){
                 if(computeCell(j,i)){
-                    setCell(j,i,true);
+                    setCellCopy(j,i,true);
                 }
                 else{
-                    setCell(j,i,false);
+                    setCellCopy(j,i,false);
                 }
             }
         }   
+        setCopiedWorld();
     }
     public void play(){
-        nextGeneration();
         print();
         char continueGame = myObj.next().charAt(0);
         if(continueGame == 's'){
+            nextGeneration();
             play();
         }
-        else if(continueGame  = 'q'){
+        else if(continueGame  == 'q'){
             return;
         }
     }
