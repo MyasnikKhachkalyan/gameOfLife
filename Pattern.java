@@ -19,27 +19,21 @@ public class Pattern{
     }
 
     public static void main(String[] args){
-        ////// to do
+        Pattern pat = new Pattern(args[0]);
+        pat.printFormat();
     }
 
     public void initialise(boolean[][] world){
         String[] helparr = pattern.split(" ");
 
-        int[][] cells = new int[helparr.length][];
 
-        for(int i=0; i<cells.length; i++){
-            cells[i] = new int[helparr[i].length()];
-            for(int j=0; j<cells[i].length; j++){
-                cells[i][j] = Character.getNumericValue(helparr[i].charAt(j));
+        for(int i=0; i<helparr.length; i++){
+            for(int j=0; j<helparr[i].length(); j++){
+                if(Character.getNumericValue(helparr[i].charAt(j)) == 1){
+                    setCell(world,j+startUpperCol,i+startUpperRow,true);
+                }
             }
         } 
-        for(int i=0; i<cells.length; i++){
-            for(int j=0; j<cells[i].length; j++){
-               if(cells[i][j]==1){
-                   setCell(world,j+startUpperCol,i+startUpperRow,true);
-               }
-            }
-        }
     }
 
     public void setCell(boolean[][] world ,int col, int row, boolean value){

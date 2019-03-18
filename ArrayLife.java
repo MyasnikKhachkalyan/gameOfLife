@@ -84,7 +84,7 @@ public class ArrayLife{
                 if(i==row && j==col){
                     continue;
                 }
-                if(getCell(i,j)){
+                if(getCell(j,i)){
                     counter++;
                 }
             }
@@ -92,7 +92,8 @@ public class ArrayLife{
         return counter;
     }
     private boolean computeCell(int col, int row){
-        if(countNeighbours(col, row)<2 || countNeighbours(col, row)>3){
+        int numOfNeighbours = countNeighbours(col, row); 
+        if(numOfNeighbours<2 || numOfNeighbours>3){
             return false;
         }
         return true;
