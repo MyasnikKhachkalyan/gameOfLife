@@ -3,16 +3,13 @@ public class ArrayLife{
     private int width;
     private int height;
     private boolean[][] world; 
-    private boolean[][] worldCopy;
     private Pattern pattern;
-    private Scanner myObj = new Scanner(System.in);
 
     public ArrayLife(String format){
         pattern = new Pattern(format);
         width = pattern.getWidth();
         height = pattern.getHeight();
         world = new boolean[height][width];
-        worldCopy = new boolean[height][width];
         pattern.initialise(world);
 
 
@@ -23,18 +20,6 @@ public class ArrayLife{
         al.play();
     }
 
-    private void setCopiedWorld(){
-        for(int i=0; i<height; i++){
-            for(int j=0; j<width; j++){
-                 world[i][j] = worldCopy[i][j] ;
-            }
-        }
-        for(int i=0; i<height; i++){
-            for(int j=0; j<width; j++){
-                worldCopy[i][j] = false;
-            }
-        }   
-    }
 
     public boolean getCell(int col, int row){
         if(col<0 || col>=width){
@@ -46,7 +31,7 @@ public class ArrayLife{
         return world[row][col];
         
     }
-    public void setCell(int col, int row, boolean value){
+    private void setCell(int col, int row, boolean value){
         if(col<0 || col>=width){
             return;
         }
@@ -54,15 +39,6 @@ public class ArrayLife{
             return;
         }
         world[row][col] = value;
-    }
-    private void setCellCopy(int col, int row, boolean value){
-        if(col<0 || col>=width){
-            return;
-        }
-        if(row<0 || row>=height){
-            return;
-        }
-        worldCopy[row][col] = value;
     }
     public void print(){
         for(int i=0; i<height; i++){
@@ -93,25 +69,41 @@ public class ArrayLife{
     }
     private boolean computeCell(int col, int row){
         int numOfNeighbours = countNeighbours(col, row); 
-        if(numOfNeighbours<2 || numOfNeighbours>3){
-            return false;
+        if(getCell(col, row)){
+            if(numOfNeighbours>=2 && numOfNeighbours<=3){
+                return true;
+            }
+            else{
+                return false;
+            }
         }
-        return true;
+        else{
+            if(numOfNeighbours==3){
+                return true;
+            }
+            else{
+                return false;
+            }
+
+        }   
     }
-    public void nextGeneration(){
+    private void nextGeneration(){
+        boolean[][] worldCopy = new boolean[width][height];
         for(int i=0; i<height; i++){
             for(int j=0; j<width; j++){
                 if(computeCell(j,i)){
-                    setCellCopy(j,i,true);
-                }
-                else{
-                    setCellCopy(j,i,false);
+                    worldCopy[i][j] = true;
                 }
             }
         }   
-        setCopiedWorld();
+        for(int i=0; i<height; i++){
+            for(int j=0; j<width; j++){
+                 world[i][j] = worldCopy[i][j] ;
+            }
+        }
     }
     public void play(){
+        Scanner myObj = new Scanner(System.in);
         print();
         char continueGame = myObj.next().charAt(0);
         if(continueGame == 's'){
@@ -123,3 +115,13 @@ public class ArrayLife{
         }
     }
 }
+
+///////////////////////////////////////////
+// method play is public because we need to use it in our main method to write al.play
+// method nextGeneration is used only inside a class in play method and there is no need to make it public.
+// method computeCell is used only inside a class in nextGeneration method,  no need to make it public.
+// method counNeighbours is used only inside a class in computeCell method,  no need to make it public.
+// method print is public so the world could be just printed for e.g. from main method by al.print, in my case i did not use that option but anyway in the future could be heplful to test program
+// method setCell is private so user could not mutate the cell artificially
+// method getCell is public to get the cell when in testing the program or smth, in my case it also could haev been private, but for future tasting i left it public.
+/////////////////////////////////////////// 

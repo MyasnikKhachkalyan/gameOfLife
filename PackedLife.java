@@ -3,9 +3,8 @@ public class PackedLife{
     private int width;
     private int height;
     private long world;
-    private long worldCopy;
     private Pattern pattern; 
-    private Scanner myObj = new Scanner(System.in);   
+
     
 
 
@@ -16,8 +15,8 @@ public class PackedLife{
       
     }
     public PackedLife(String format){
-        world = 0;
         pattern = new Pattern(format);
+        world = 0;
         width = pattern.getWidth();
         height = pattern.getHeight();
 
@@ -58,23 +57,14 @@ public class PackedLife{
             return;
         }
         if(value){
-            world += Math.pow(2, (row*width+col));
+            if(!getCell(col, row)){
+                world += Math.pow(2, (row*width+col));
+            }
         }
         else{
             if(getCell(col, row)){
                 world -= Math.pow(2, (row*width+col));
             }
-        }
-    }
-    private void setLiveCellsInCopy(int col, int row, boolean value){
-        if (row < 0 || row >= height) {
-            return;
-        }
-        if (col < 0 || col >= width) {
-            return;
-        }
-        if(value){
-            worldCopy += Math.pow(2, (row*width+col));
         }
     }
     public void print(){
@@ -89,6 +79,7 @@ public class PackedLife{
             }
             System.out.println();
         }
+        //System.out.println(world);
     }
     private int countNeighbours(int col, int row){
         int counter = 0;
@@ -106,23 +97,39 @@ public class PackedLife{
     }
     private boolean computeCell(int col, int row){
         int numOfNeighbours = countNeighbours(col, row); 
-        if(numOfNeighbours<2 || numOfNeighbours>3){
-            return false;
+        if(getCell(col, row)){
+            if(numOfNeighbours>=2 && numOfNeighbours<=3){
+                //System.out.println(numOfNeighbours + "   alive 2or3");
+                return true;
+            }
+            else{
+                return false;
+            }
         }
-        return true;
+        else{
+            if(numOfNeighbours==3){
+                //System.out.println(numOfNeighbours + "   died 3");
+                return true;    
+            }
+            else{
+                return false;
+            }
+
+        }
     }
     private void nextGeneration(){
-        worldCopy = 0;
+        long worldCopy = 0;
         for(int i=0; i<height; i++){
             for(int j=0; j<width; j++){
                 if(computeCell(j,i)){
-                    setLiveCellsInCopy(j,i,true);
+                    worldCopy += Math.pow(2, (i*width+j));
                 }
             }
         }   
         world = worldCopy;
     }
     public void play(){
+        Scanner myObj = new Scanner(System.in);   
         print();
         char continueGame = myObj.next().charAt(0);
         if(continueGame == 's'){
@@ -134,3 +141,15 @@ public class PackedLife{
         }
     }
 }
+
+
+///////////////////////////////////////////
+// method play is public because we need to use it in our main method to write al.play
+// method nextGeneration is used only inside a class in play method and there is no need to make it public.
+// method computeCell is used only inside a class in nextGeneration method,  no need to make it public.
+// method counNeighbours is used only inside a class in computeCell method,  no need to make it public.
+// method print is public so the world could be just printed for e.g. from main method by al.print, in my case i did not use that option but anyway in the future could be heplful to test program
+// method setCell is private so user could not mutate the cell artificially
+// method getCell is public to get the cell when in testing the program or smth, in my case it also could haev been private, but for future tasting i left it public.
+// method initialise is privite as it is used only  in constructor and no need to be public
+///////////////////////////////////////////

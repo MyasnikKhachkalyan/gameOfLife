@@ -30,20 +30,16 @@ public class Pattern{
         for(int i=0; i<helparr.length; i++){
             for(int j=0; j<helparr[i].length(); j++){
                 if(Character.getNumericValue(helparr[i].charAt(j)) == 1){
-                    setCell(world,j+startUpperCol,i+startUpperRow,true);
+                            if(j<0 || j>=width){
+                                return;
+                            }
+                            if(i<0 || i>=height){
+                                return;
+                            }
+                            world[i+1][j+1] = true;
                 }
             }
         } 
-    }
-
-    public void setCell(boolean[][] world ,int col, int row, boolean value){
-        if(col<0 || col>=width){
-            return;
-        }
-        if(row<0 || row>=height){
-            return;
-        }
-        world[row][col] = value;
     }
 
     public void printFormat(){
