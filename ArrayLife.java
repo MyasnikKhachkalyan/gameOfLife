@@ -103,20 +103,28 @@ public class ArrayLife{
         }
     }
     public void play(){
-        Scanner myObj = new Scanner(System.in);
-        print();
-        char continueGame = myObj.next().charAt(0);
-        if(continueGame == 's'){
-            nextGeneration();
-            play();
+        Scanner myObj = new Scanner(System.in);   
+        print();  
+        String continueGame;   
+        for(continueGame = myObj.next();!continueGame.equals("q") && continueGame.equals("s") && continueGame.length()==1;continueGame = myObj.next()){  
+                nextGeneration();
+                print();
         }
-        else if(continueGame  == 'q'){
-            return;
+        if(continueGame.equals("q")){
+            System.out.println("You succesfully quited the game");
+        }
+        else if(continueGame.length()!=1){
+             throw new Error("U inputed more than one character");
+        }
+        else{
+             throw new Error("U inputed wrong character");
         }
     }
 }
 
 ///////////////////////////////////////////
+// the format provided should be written in "" so the program takes it as a single argument.
+
 // method play is public because we need to use it in our main method to write al.play
 // method nextGeneration is used only inside a class in play method and there is no need to make it public.
 // method computeCell is used only inside a class in nextGeneration method,  no need to make it public.

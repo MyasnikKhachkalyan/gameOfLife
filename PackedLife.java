@@ -16,7 +16,7 @@ public class PackedLife{
     }
     public PackedLife(String format){
         pattern = new Pattern(format);
-        world = 0;
+        world = 0L;
         width = pattern.getWidth();
         height = pattern.getHeight();
 
@@ -57,13 +57,11 @@ public class PackedLife{
             return;
         }
         if(value){
-            if(!getCell(col, row)){
-                world += Math.pow(2, (row*width+col));
-            }
+                world = world | (1L << row*width+col);
         }
         else{
             if(getCell(col, row)){
-                world -= Math.pow(2, (row*width+col));
+                world =  world ^ (1L << row*width+col);
             }
         }
     }
@@ -79,7 +77,6 @@ public class PackedLife{
             }
             System.out.println();
         }
-        //System.out.println(world);
     }
     private int countNeighbours(int col, int row){
         int counter = 0;
@@ -99,7 +96,6 @@ public class PackedLife{
         int numOfNeighbours = countNeighbours(col, row); 
         if(getCell(col, row)){
             if(numOfNeighbours>=2 && numOfNeighbours<=3){
-                //System.out.println(numOfNeighbours + "   alive 2or3");
                 return true;
             }
             else{
@@ -108,7 +104,6 @@ public class PackedLife{
         }
         else{
             if(numOfNeighbours==3){
-                //System.out.println(numOfNeighbours + "   died 3");
                 return true;    
             }
             else{
@@ -118,11 +113,11 @@ public class PackedLife{
         }
     }
     private void nextGeneration(){
-        long worldCopy = 0;
+        long worldCopy = 0L;
         for(int i=0; i<height; i++){
             for(int j=0; j<width; j++){
                 if(computeCell(j,i)){
-                    worldCopy += Math.pow(2, (i*width+j));
+                    worldCopy = worldCopy | (1L << i*width+j);
                 }
             }
         }   
@@ -130,16 +125,23 @@ public class PackedLife{
     }
     public void play(){
         Scanner myObj = new Scanner(System.in);   
-        print();
-        char continueGame = myObj.next().charAt(0);
-        if(continueGame == 's'){
-            nextGeneration();
-            play();
+        print();  
+        String continueGame;   
+        for(continueGame = myObj.next();!continueGame.equals("q") && continueGame.equals("s") && continueGame.length()==1;continueGame = myObj.next()){  
+                nextGeneration();
+                print();
         }
-        else if(continueGame  == 'q'){
-            return;
+        if(continueGame.equals("q")){
+            System.out.println("You succesfully quited the game");
+        }
+        else if(continueGame.length()!=1){
+             throw new Error("U inputed more than one character");
+        }
+        else{
+             throw new Error("U inputed wrong character");
         }
     }
+    
 }
 
 
@@ -153,3 +155,8 @@ public class PackedLife{
 // method getCell is public to get the cell when in testing the program or smth, in my case it also could haev been private, but for future tasting i left it public.
 // method initialise is privite as it is used only  in constructor and no need to be public
 ///////////////////////////////////////////
+
+////
+//for untill 8*8 world it is better to use packedlife as it save some space, uses space for upto8*8 world, but for bigger worlds we cannot rely on this and should use Arraylife
+////
+//because there is no need to pass world as an argument, as it is visible inside the class
